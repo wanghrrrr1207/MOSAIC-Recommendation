@@ -372,9 +372,9 @@ class ReviewAttentionNetwork(nn.Module):
 class MMOE_Classifier(nn.Module):
     def __init__(self, input_dim, num_classes=4):
         super(MMOE_Classifier, self).__init__()
-        self.linear1 = nn.Linear(input_dim, input_dim)  # 保持维度
+        self.linear1 = nn.Linear(input_dim, input_dim)  
         self.linear2 = nn.Linear(input_dim, num_classes)
-        self.init_weights()  # 初始化（同原MMOE_MLP）
+        self.init_weights()  
     def init_weights(self):
         initrange = 0.1
         self.linear1.weight.data.uniform_(-initrange, initrange)
@@ -383,9 +383,9 @@ class MMOE_Classifier(nn.Module):
         self.linear2.bias.data.zero_()
 
     def forward(self, hidden):
-        mlp_vector = F.relu(self.linear1(hidden))  # 移除Sigmoid
-        logits = self.linear2(mlp_vector)          # 输出4维
-        return F.softmax(logits, dim=-1)           # 多分类概率
+        mlp_vector = F.relu(self.linear1(hidden))  
+        logits = self.linear2(mlp_vector)          
+        return F.softmax(logits, dim=-1)           
 
 class MultiTaskModel(nn.Module):
     def __init__(self, num_users, num_items, input_dim, expert_dim, num_experts, sentiment_loss, num_attributes, alpha, belta):
@@ -550,7 +550,7 @@ class MultiTaskModel(nn.Module):
                 rating_feature=rating_expert_output,
                 true_labels=opinion_sum_labels, #gt_group_labels
                 mask=opinion_mask,
-                use_ground_truth_labels=True  #是否用true labels做sentiment vec
+                use_ground_truth_labels=True  
             )
 
             final_score = predicted_rating_score + 0.8 * predicted_review_score
@@ -582,16 +582,14 @@ class MultiTaskModel(nn.Module):
             lambda_user = 0.4
 
             for i in range(self.num_attributes):
-                # 获取当前attribute的所有样本标签 [batch_size, 4]
+                
                 curr_user_labels = gt_user_labels[:, i, :]
                 curr_group_labels = gt_group_labels[:, i, :]
 
-                # 检查哪些样本有有效标签 (非全零)
                 user_valid_mask = (curr_user_labels.sum(dim=1)) > 0  # [batch_size]
                 group_valid_mask = (curr_group_labels.sum(dim=1)) > 0
 
                 if user_valid_mask.any():
-                # 只计算有效样本的user opinion loss和group loss
                     user_valid_pred = predicted_opinions[:, i, :][user_valid_mask]
                     group_valid_pred = predicted_opinions[:, i, :][group_valid_mask]
                     user_valid_true = torch.argmax(curr_user_labels[user_valid_mask], dim=1)
@@ -621,7 +619,6 @@ class MultiTaskModel(nn.Module):
                 sentiment_vec_sum = torch.matmul(group_sum_labels.float(),
                                                 self.review_attention.sentiment_embedding)  # [B, 7, D]
 
-                # 扁平化所有有效位置进行比较
                 valid_mask = (gt_group_labels.sum(dim=-1) > 0)  # [B, 7]
                 cosine_sum_loss = F.cosine_embedding_loss(sentiment_vec_pred[valid_mask],
                     sentiment_vec_sum[valid_mask],
@@ -670,16 +667,13 @@ class MultiTaskModel(nn.Module):
         lambda_user = 0.4
 
         for i in range(self.num_attributes):
-            # 获取当前attribute的所有样本标签 [batch_size, 4]
             curr_user_labels = gt_user_labels[:, i, :]
             curr_group_labels = gt_group_labels[:, i, :]
-
-            # 检查哪些样本有有效标签 (非全零)
+            
             user_valid_mask = (curr_user_labels.sum(dim=1)) > 0  # [batch_size]
             group_valid_mask = (curr_group_labels.sum(dim=1)) > 0
 
             if user_valid_mask.any():
-                # 只计算有效样本的user opinion loss和group loss
                 user_valid_pred = predicted_labels[:, i, :][user_valid_mask]
                 group_valid_pred = predicted_labels[:, i, :][group_valid_mask]
                 user_valid_true = torch.argmax(curr_user_labels[user_valid_mask], dim=1)
@@ -688,8 +682,6 @@ class MultiTaskModel(nn.Module):
                 user_opinion_loss += F.cross_entropy(user_valid_pred, user_valid_true)
                 group_opinion_loss += F.cross_entropy(group_valid_pred, group_valid_true)
                 valid_opinion_count += 1
-
-            # 平均有效的attribute loss
 
         if valid_opinion_count > 0:
             user_opinion_loss /= valid_opinion_count
