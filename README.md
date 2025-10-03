@@ -1,5 +1,5 @@
 # meta-review-mmoe
-The source code for **Beyond a Single Story: Meta-Reviewing Sparse and Incomplete User-generated Contents for Recommendation** submitted to WWW'26.
+The source code for paper **Beyond a Single Story: Meta-Reviewing Sparse and Incomplete User-generated Contents for Recommendation** submitted to WWW'26.
 
 This repository contains Python scripts for data preprocessing, model definition, metric computation, and end-to-end training and evaluation.
 
