@@ -41,20 +41,12 @@ class group_MMOE_trainer:
         os.makedirs(self.save_dir, exist_ok=True)  # Ensure save directory exists
 
     def preprocess_labels(self, one_hot_labels):
-        """
-        将one-hot标签转换为索引，并正确处理全零标签
-        参数:
-            one_hot_labels: [batch_size, num_attributes, 4] (one-hot格式)
-        返回:
-            label_indices: [batch_size, num_attributes] (有效标签为0-3，全零标签为-1)
-        """
-        # 步骤1：创建全零标签的掩码
+
         is_valid = (one_hot_labels.sum(dim=-1)) > 0  # [batch_size, num_attributes]
 
-                    # 步骤2：初始化结果张量（全填充-1）
+                 
         label_indices = torch.full_like(is_valid, -1, dtype=torch.long)  # [batch_size, num_attributes]
 
-        # 步骤3：仅对有效标签计算argmax
         if is_valid.any():
             valid_labels = one_hot_labels[is_valid]  # [num_valid, 4]
         label_indices[is_valid] = torch.argmax(valid_labels, dim=1)
@@ -520,7 +512,6 @@ class group_MMOE_trainer:
         predicted_labels: [B, 7, 4] logits or probs
         """
         with torch.no_grad():
-            # [B, 7] → bool，表示该位置是否为有效标签
             valid_mask = true_labels.sum(dim=-1) > 0  # [B, 7]
 
             # 获取预测类别：取最大概率的位置
