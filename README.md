@@ -8,10 +8,15 @@ This repository contains Python scripts for data preprocessing, model definition
 ├── data/ # Dataset directory 
 
 ├── models/ # Model definitions and architecture components
+
 ├── main.py # Entry script for running experiments
+
 ├── train_eval.py # Core training and evaluation pipeline
+
 ├── metrics.py # Metric computation (RMSE, MAE)
+
 ├── requirements.txt # Dependency list for reproducibility
+
 └── README.md # Documentation
 
 ## 🧩 File Descriptions
