@@ -37,8 +37,7 @@ logging.getLogger().addHandler(logging.StreamHandler())
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Multitask Model for Rating and Review Generation")
-    base_path = "/home/hongren/review_gen_MMOE/new_processed_data/"
-    # base_path = "/home/hongren/hongren_mmoe/data/"
+    base_path = "/home/Your-Base-Path"
     parser.add_argument('--base_path', type=str, default=base_path, help="Base path to all data files")
     parser.add_argument('--epochs', type=int, default=30, help="Number of epochs")
     parser.add_argument('--batch_size', type=int, default=512, help="Batch size")
@@ -54,7 +53,7 @@ def parse_args():
     parser.add_argument('--num_group_users', type=int, default=15, help="Number of group users in ablation study")
     parser.add_argument('--alpha', type=float, default=0.0, help="opinion_loss parameter")
     parser.add_argument('--belta', type=int, default=30, help="cosine_sum parameter")
-    parser.add_argument("--save_dir", type=str, default="./yelp_ab/MMOE_trip", #MMOE_3.21 for yelp
+    parser.add_argument("--save_dir", type=str, default="./yelp_ab/MMOE_trip",
                         help="Directory to save best model checkpoints")
 
     # parser.add_argument('--gpu', type=int, default=1, help="GPU id to use")
@@ -72,10 +71,7 @@ def main():
 
     args = parse_args()
     print("Loading rating and opinions matrix...")
-    group_data = torch.load("/home/hongren/review_gen_MMOE/data/amazon_beauty_results_mmoe_7.13.pt")
-    # group_data = torch.load("/home/hongren/review_gen_MMOE/data/Yelp_mmoe/yelp_with_group_data_6.24_filtered.pt")
-    # group_data = torch.load("/home/hongren/review_gen_MMOE/data/tripadvisor_results_mmoe_8.11.pt")
-    # group_data = torch.load("/home/hongren/review_gen_MMOE/data/amazon_sports_results_mmoe_9.14.pt")
+    group_data = torch.load("/home/Your-Data-Path")
 
     # Load item2idx mapping
     #Yelp
@@ -102,10 +98,6 @@ def main():
     #     item2idx = json.load(f)
     # with open("./data/Amazon_mmoe/sports_user2idx.json", "r") as f:
     #     user2idx = json.load(f)
-    #
-    # print("Load friends_item pairs matrix...")
-    # with open(args.friends_items_pairs_file, "r") as f:
-    #     friends_items_pairs = json.load(f)
 
 #======================================================================
 
@@ -114,7 +106,7 @@ def main():
 
     train_loader, val_loader, test_loader = load_group_data_save_index(group_data, batch_size=args.batch_size)
 
-    num_users = len(user2idx.values()) ## embedding不会出错
+    num_users = len(user2idx.values()) 
     num_items = len(item2idx.values())
 
 
